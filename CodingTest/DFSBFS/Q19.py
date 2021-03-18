@@ -8,36 +8,30 @@ plus, minus, mul, div = map(int, input().split())
 
 max_result = -10e9
 min_result = 10e9
-plus_cnt, minus_cnt, mul_cnt, div_cnt = 0, 0, 0, 0
-cur_idx = 0
 
 
-def dfs(num, idx):
-    global plus_cnt, minus_cnt, mul_cnt, div_cnt, cur_idx
+def dfs(num, cur_idx, plus_cnt, minus_cnt, mul_cnt, div_cnt):
     global max_result, min_result
 
-    if idx == n-1:
+    if cur_idx == n-1:
         max_result = max(num, max_result)
         min_result = min(num, min_result)
-        plus_cnt, minus_cnt, mul_cnt, div_cnt = 0, 0, 0, 0
-        idx = 0
         return
 
-    next = idx + 1
+    next = cur_idx + 1
 
-    if plus_cnt < plus:
-        plus_cnt += 1
-        dfs(num + array[next], next)
-    if minus_cnt < minus:
-        minus_cnt += 1
-        dfs(num - array[next], next)
-    if mul_cnt < mul:
-        mul_cnt += 1
-        dfs(num * array[next], next)
-    if div_cnt < div:
-        div_cnt += 1
-        dfs(num / array[next], next)
+    if plus_cnt > 0:
+        dfs(num + array[next], next, plus_cnt-1, minus_cnt, mul_cnt, div_cnt)
+    if minus_cnt > 0:
+        dfs(num - array[next], next, plus_cnt, minus_cnt-1, mul_cnt, div_cnt)
+    if mul_cnt > 0:
+        dfs(num * array[next], next, plus_cnt, minus_cnt, mul_cnt-1, div_cnt)
+    if div_cnt > 0:
+        if num >= 0:
+            dfs(num // array[next], next, plus_cnt, minus_cnt, mul_cnt, div_cnt-1)
+        else:
+            dfs(-(-num // array[next]), next, plus_cnt, minus_cnt, mul_cnt, div_cnt-1)
 
 
-dfs(array[0], 0)
+dfs(array[0], 0, plus, minus, mul, div)
 print(max_result, min_result, sep='\n')
